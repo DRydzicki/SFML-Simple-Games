@@ -1,6 +1,6 @@
 #include<SFML/Graphics.hpp>
 #include<time.h>
-#include"Snake.h"
+#include"Snake/Snake.h"
 
 
 
