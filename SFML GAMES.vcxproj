@@ -136,10 +136,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="MineSweeper\MineSweeper.cpp" />
     <ClCompile Include="Snake\Snake.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="MineSweeper\MineSweeper.h" />
     <ClInclude Include="Snake\Snake.h" />
     <ClInclude Include="Utilities\Random.h" />
   </ItemGroup>

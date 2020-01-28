@@ -1,5 +1,5 @@
-#ifndef SNAKE_H_
-#define SNAKE_H_
+#pragma once
+
 #include<SFML/Graphics.hpp>
 #include<time.h>
 #include<string>
@@ -48,5 +48,3 @@ public:
 
 };
 
-
-#endif // !SNAKE_H_
