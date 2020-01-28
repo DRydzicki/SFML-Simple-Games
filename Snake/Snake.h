@@ -1,11 +1,12 @@
-#pragma once
 #ifndef SNAKE_H_
 #define SNAKE_H_
 #include<SFML/Graphics.hpp>
 #include<time.h>
 #include<string>
+#include"../Utilities/Random.h"
 
-//debug
+
+//debug libraries
 #include<iostream>
 
 
@@ -25,9 +26,8 @@ class Snake {
 	int snakeX[500], snakeY[500];
 	int snakeLength = 1;
 
+	enum Direction { STOP = 0, LEFT, RIGHT, UP, DOWN }direction;
 	
-	enum  Direction { STOP = 0, LEFT, RIGHT, UP, DOWN };
-	Direction direction;
 
 	void Move();
 	void RenderFloor(sf::RenderWindow&,sf::Sprite);
@@ -43,6 +43,7 @@ class Snake {
 public:
 	Snake();
 	Snake(int, int, bool);
+	~Snake();
 	void Start();
 
 };

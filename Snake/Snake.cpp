@@ -2,16 +2,18 @@
 
 
 Snake::Snake() {
-	this->width = 30;
-	this->height = 20;
-	this->wallCrossing = true;
+	width = 30;
+	height = 20;
+	wallCrossing = true;
 }
 
-Snake::Snake(int width, int height,bool wallCrossing) {
+Snake::Snake(int width, int height, bool wallCrossing) {
 	this->width = width;
 	this->height = height;
 	this->wallCrossing = wallCrossing;
 }
+
+Snake::~Snake(){}
 
 
 void Snake::Render() {
@@ -24,9 +26,9 @@ void Snake::Render() {
 
 	sf::Texture snakeTex, foodTex, boardTex;
 
-	snakeTex.loadFromFile("images/snake.png");
-	boardTex.loadFromFile("images/floor.png");
-	foodTex.loadFromFile("images/apple.png");
+	snakeTex.loadFromFile("images/snake/snake.png");
+	boardTex.loadFromFile("images/snake/floor.png");
+	foodTex.loadFromFile("images/snake/apple.png");
 
 	sf::Sprite snake(snakeTex);
 	sf::Sprite board(boardTex);
@@ -44,10 +46,10 @@ void Snake::Render() {
 		clock.restart();
 		t += time;
 
-		if (gameOver) {
-			GameOver(gameWindow);
-		}
-		else {
+		//if (gameOver) {
+		//	GameOver(gameWindow);
+		//}
+		//else {
 			sf::Event event;
 			while (gameWindow.pollEvent(event)) {
 				if (event.type == sf::Event::Closed)
@@ -56,7 +58,6 @@ void Snake::Render() {
 					pause = !pause;
 			}
 
-
 			if (!pause) {
 				if (t > dt) {
 					t = 0;
@@ -64,7 +65,6 @@ void Snake::Render() {
 				}
 
 				gameWindow.clear();
-
 
 				RenderFloor(gameWindow, board);
 				PlaceFood(gameWindow, food);
@@ -81,8 +81,7 @@ void Snake::Render() {
 				gameWindow.display();
 			}
 
-		}
-		
+		//}
 	}
 }
 
@@ -109,8 +108,9 @@ void Snake::PlaceFood(sf::RenderWindow& gameWindow, sf::Sprite food) {
 }
 
 void Snake::CreateFood() {
-	foodX = (rand() % width) * picSize;
-	foodY = (rand() % height) * picSize;
+	Random rnd;
+	foodX = rnd.getIntInRange(0, width-1)*picSize;
+	foodY = rnd.getIntInRange(0, height-1)*picSize;//(rand() % width) * picSize;
 }
 
 
@@ -148,11 +148,11 @@ void Snake::Calculate() {
 
 void Snake::WallCrossing() {
 	if (wallCrossing) {
-		if (snakeX[0] >= width) snakeX[0] = 0;
-		else if (snakeX[0] < 0) snakeX[0] = width - 1;
+		if (snakeX[0] > width) snakeX[0] = 0;
+		else if (snakeX[0] < 0) snakeX[0] = width -1;
 
-		if (snakeY[0] >= height) snakeY[0] = 0;
-		else if (snakeY[0] < 0) snakeY[0] = height - 1;
+		if (snakeY[0] > height) snakeY[0] = 0;
+		else if (snakeY[0] < 0) snakeY[0] = height -1;
 	}
 	else if(snakeX[0] > width || snakeX[0] < 0 || snakeY[0] > height || snakeY[0] < 0)
 		gameOver = true;
