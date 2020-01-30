@@ -18,21 +18,27 @@
     <ClCompile Include="Source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Snake\Snake.cpp">
+    <ClCompile Include="Games\MineSweeper\MineSweeper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MineSweeper\MineSweeper.cpp">
+    <ClCompile Include="Games\Snake\Snake.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Menu\Menu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Snake\Snake.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Utilities\Random.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MineSweeper\MineSweeper.h">
+    <ClInclude Include="GUI\Menu\Menu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Games\MineSweeper\MineSweeper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Games\Snake\Snake.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
