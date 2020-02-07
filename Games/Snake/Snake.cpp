@@ -118,7 +118,7 @@ void Snake::CreateFood() {
 	foodX = rnd.getIntInRange(0, width-1)*picSize;
 	foodY = rnd.getIntInRange(0, height-1)*picSize;
 	for (int i = 0; i < snakeLength; i++) {
-		if (snakeX[i] == foodX && snakeY[i] == foodY)
+		if (snakeX[i]*picSize == foodX && snakeY[i]*picSize == foodY)
 			CreateFood();
 	}
 }
