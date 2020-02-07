@@ -12,6 +12,7 @@
 
 
 class Snake {
+
 	bool gameOver=false;
 	bool pause = false;
 	bool wallCrossing;

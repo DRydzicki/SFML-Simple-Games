@@ -50,8 +50,7 @@ void Snake::Render() {
 			GameOver(gameWindow);
 			music.stop();
 			while (gameWindow.pollEvent(event))
-				if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::R)
-				{
+				if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::R){
 					gameOver = !gameOver;
 					
 					Restart();
@@ -227,6 +226,11 @@ void Snake::Restart() {
 
 
 void Snake::DisplayPause(sf::RenderWindow& gameWindow) {
+	if (pause)
+		music.pause();
+	else
+		music.play();
+
 	sf::RectangleShape shape(sf::Vector2f(width * picSize + 1, height * 2 + 1));
 	shape.setFillColor(sf::Color::White);
 
@@ -238,8 +242,10 @@ void Snake::DisplayPause(sf::RenderWindow& gameWindow) {
 	pause.setString("PAUSE");
 	pause.setCharacterSize(28);
 	pause.setFillColor(sf::Color::Black);
-	pause.setPosition(width * picSize / 3, height * picSize / 2);
-	shape.setPosition(width - 2 * picSize, height / 2 * picSize);
+	pause.setPosition(width * picSize / 2, height * picSize / 2);
+	pause.setOrigin(pause.getLocalBounds().width / 2, pause.getLocalBounds().height / 2);
+	shape.setPosition(width -2* picSize , height * picSize);
+	shape.setPosition(shape.getLocalBounds().width / 2, shape.getLocalBounds().height / 2);
 
 	gameWindow.draw(shape);
 	gameWindow.draw(pause);
