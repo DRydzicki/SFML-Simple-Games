@@ -116,7 +116,11 @@ void Snake::PlaceFood(sf::RenderWindow& gameWindow, sf::Sprite food) {
 void Snake::CreateFood() {
 	Random rnd;
 	foodX = rnd.getIntInRange(0, width-1)*picSize;
-	foodY = rnd.getIntInRange(0, height-1)*picSize;//(rand() % width) * picSize;
+	foodY = rnd.getIntInRange(0, height-1)*picSize;
+	for (int i = 0; i < snakeLength; i++) {
+		if (snakeX[i] == foodX && snakeY[i] == foodY)
+			CreateFood();
+	}
 }
 
 
