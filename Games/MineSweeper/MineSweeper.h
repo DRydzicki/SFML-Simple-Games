@@ -5,15 +5,19 @@
 
 //debug
 #include<iostream>
-
+#include<Windows.h>
 
 class MineSweeper
 {
+	typedef std::vector<std::vector<sf::Sprite>> GameBoard;
+
+	bool gameOver = false;
 	const int picSize=16;
 	int height, width;
-	unsigned short difficulty;
+	//unsigned short difficulty;
 	int numberOfBombs;
 	int bombsLeft = numberOfBombs;
+
 
 	std::vector<std::vector<int>> array;
 	
@@ -28,11 +32,14 @@ private:
 	void CalculateBombs();
 	void VerifyBombLocation();
 	void CalculateNumbers();
-	void Calculate(sf::Vector2i, std::vector<sf::Sprite>, std::vector<std::vector<sf::Sprite>>&, std::vector<std::vector<sf::Sprite>>&);
-	void CheckForFlag(sf::Vector2i, std::vector<sf::Sprite>, std::vector<std::vector<sf::Sprite>>&, std::vector<std::vector<sf::Sprite>>&);
-	void DisplayEmpty(int x, int y, std::vector<sf::Sprite>, std::vector<std::vector<sf::Sprite>>&, std::vector<std::vector<sf::Sprite>>&);
-	void RenderBoard(sf::RenderWindow&, sf::Sprite);
+	void Calculate(sf::Vector2i, std::vector<sf::Sprite>, GameBoard&, GameBoard&);
+	void CheckForFlag(sf::Vector2i, std::vector<sf::Sprite>, GameBoard&, GameBoard&);
+	void DisplayEmpty(int x, int y, std::vector<sf::Sprite>, GameBoard&, GameBoard&);
+	void DisplayIfNotEmpty(int x, int y, std::vector<sf::Sprite>, GameBoard&, GameBoard&);
+	void GameOver(sf::RenderWindow&);
 	void Render();
+	void Restart();
+	void DrawBoard(sf::RenderWindow& , GameBoard&);
 
 public:
 	MineSweeper();

@@ -114,9 +114,8 @@ void MineSweeper::Fill(sf::RenderWindow &gameWindow, std::vector<sf::Sprite> spr
 }
 
 
-void MineSweeper::Calculate(sf::Vector2i mousePos, std::vector<sf::Sprite> sprites, std::vector<std::vector<sf::Sprite>>& gameBoard, std::vector<std::vector<sf::Sprite>>& realGameBoard) {
+void MineSweeper::Calculate(sf::Vector2i mousePos, std::vector<sf::Sprite> sprites, GameBoard& gameBoard, GameBoard& realGameBoard) {
 	if (realGameBoard[mousePos.x / picSize][mousePos.y / picSize].getTexture() == sprites[11].getTexture()) {
-		
 		if (gameBoard[mousePos.x / picSize][mousePos.y / picSize].getTexture() == sprites[0].getTexture()) 
 			DisplayEmpty(mousePos.x / picSize, mousePos.y / picSize, sprites, gameBoard, realGameBoard);
 		else if (gameBoard[mousePos.x / picSize][mousePos.y / picSize].getTexture() == sprites[9].getTexture()) {
@@ -126,15 +125,14 @@ void MineSweeper::Calculate(sf::Vector2i mousePos, std::vector<sf::Sprite> sprit
 						realGameBoard[i][j] = sprites[9];
 				}
 			}
+			gameOver = true;
 		}
 		else
 			realGameBoard[mousePos.x / picSize][mousePos.y / picSize] = gameBoard[mousePos.x / picSize][mousePos.y / picSize];
-
-		
 	}
 }
 
-void MineSweeper::CheckForFlag(sf::Vector2i mousePos, std::vector<sf::Sprite> sprites, std::vector<std::vector<sf::Sprite>>& gameBoard, std::vector<std::vector<sf::Sprite>>& realGameBoard) {
+void MineSweeper::CheckForFlag(sf::Vector2i mousePos, std::vector<sf::Sprite> sprites, GameBoard& gameBoard, GameBoard& realGameBoard) {
 	if (realGameBoard[mousePos.x / picSize][mousePos.y / picSize].getTexture() == sprites[11].getTexture()) {
 		if (gameBoard[mousePos.x / picSize][mousePos.y / picSize].getTexture() == sprites[9].getTexture())
 			bombsLeft--;
@@ -147,49 +145,62 @@ void MineSweeper::CheckForFlag(sf::Vector2i mousePos, std::vector<sf::Sprite> sp
 	}
 }
 
-
-void MineSweeper::DisplayEmpty(int x, int y, std::vector<sf::Sprite> sprites, std::vector<std::vector<sf::Sprite>>& gameBoard, std::vector<std::vector<sf::Sprite>>& realGameBoard) {
+void MineSweeper::DisplayEmpty(int x, int y, std::vector<sf::Sprite> sprites, GameBoard& gameBoard, GameBoard& realGameBoard) {
 	if (gameBoard[x][y].getTexture() == sprites[0].getTexture() && realGameBoard[x][y].getTexture() == sprites[11].getTexture()) {
 		realGameBoard[x][y] = sprites[0];
-		if (x - 1 >= 0 && y - 1 >= 0)
-			DisplayEmpty(x-1, y-1, sprites, gameBoard, realGameBoard);
-		if (x - 1 >= 0)
+		if (x - 1 >= 0 && y - 1 >= 0) {
+			DisplayEmpty(x - 1, y-1, sprites, gameBoard, realGameBoard);
+			DisplayIfNotEmpty(x - 1, y-1, sprites, gameBoard, realGameBoard);
+		}
+		if (x - 1 >= 0) {
 			DisplayEmpty(x - 1, y, sprites, gameBoard, realGameBoard);
-		if (x - 1 >= 0 && y + 1 < height)
-			DisplayEmpty(x - 1, y + 1, sprites, gameBoard, realGameBoard);
-		if (y - 1 >= 0)
+			DisplayIfNotEmpty(x - 1, y, sprites, gameBoard, realGameBoard);
+		}
+		if (x - 1 >= 0 && y + 1 < height) {
+			DisplayEmpty(x - 1, y+1, sprites, gameBoard, realGameBoard);
+			DisplayIfNotEmpty(x - 1, y + 1, sprites, gameBoard, realGameBoard);
+		}
+		if (y - 1 >= 0) {
 			DisplayEmpty(x, y - 1, sprites, gameBoard, realGameBoard);
-		if (y + 1 < height)
+			DisplayIfNotEmpty(x , y - 1, sprites, gameBoard, realGameBoard);
+		}
+		if (y + 1 < height) {
 			DisplayEmpty(x, y + 1, sprites, gameBoard, realGameBoard);
-		if (x + 1 < width && y - 1 >= 0)
-			DisplayEmpty(x + 1, y - 1, sprites, gameBoard, realGameBoard);
-		if (x + 1 < width)
-			DisplayEmpty(x + 1, y , sprites, gameBoard, realGameBoard);
-		if (x + 1 < width && y + 1 < height)
-			DisplayEmpty(x + 1, y + 1, sprites, gameBoard, realGameBoard);
-	}
-}
-
-void MineSweeper::RenderBoard(sf::RenderWindow& gameWindow, sf::Sprite board) {
-	for (int i = 0; i < width; i++) {
-		for (int j = 0; j < height; j++) {
-			board.setPosition(i * picSize, j * picSize);
-			gameWindow.draw(board);
+			DisplayIfNotEmpty(x, y + 1, sprites, gameBoard, realGameBoard);
+		}
+		if (x + 1 < width && y - 1 >= 0) {
+			DisplayEmpty(x + 1, y-1, sprites, gameBoard, realGameBoard);
+			DisplayIfNotEmpty(x + 1, y - 1, sprites, gameBoard, realGameBoard);
+		}
+		if (x + 1 < width) {
+			DisplayEmpty(x + 1, y, sprites, gameBoard, realGameBoard);
+			DisplayIfNotEmpty(x + 1, y, sprites, gameBoard, realGameBoard);
+		}
+		if (x + 1 < width && y + 1 < height) {
+			DisplayEmpty(x + 1, y+1, sprites, gameBoard, realGameBoard);
+			DisplayIfNotEmpty(x + 1, y + 1, sprites, gameBoard, realGameBoard);
 		}
 	}
 }
+
+void MineSweeper::DisplayIfNotEmpty(int x, int y, std::vector<sf::Sprite> sprites, GameBoard& gameBoard, GameBoard& realGameBoard) {
+	if(realGameBoard[x][y].getTexture() != sprites[0].getTexture())
+		realGameBoard[x][y] = gameBoard[x][y];
+}
+
+void MineSweeper::DrawBoard(sf::RenderWindow& gameWindow, GameBoard& realGameBoard) {
+	for (int i = 0; i < width; i++) {
+		for (int j = 0; j < height; j++) {
+			realGameBoard[i][j].setPosition(i * picSize, j * picSize);
+			gameWindow.draw(realGameBoard[i][j]);
+		}
+	}
+}
+
 //TODO
-//DONE zrobic grafike dla pustego, nieaktywnego pola 
-//DONE sprity przechowywane w vecotrze, dopiero potem rysowane
-//DONE funkcja calculate wprowadza zmiany w tablicy przy klikniecu na pole
-//ALMOSTDONE przy klikniecu prawym na bombe zwieksza sie globalny licznik, if =numofbombs =>win
-//ALMOSTDONE wybuch po kliknieciu na bombe lewym + przegrana
-//DONE klikniecie na puste pole rekurencyjnie odkrywa puste na okolo
-//funkacja gameover ze snake'a
-//DONE reakcja lancuchowa przy wybuchu bomby
-//restrukturyzacja kodu
-//timer
-//funkcja restartujaca gre + reroll planszy
+//code cleaning
+//gui(time, bombs left)
+//restart + button
 
 void MineSweeper::Render() {
 	int realWidth = width * picSize;
@@ -227,16 +238,14 @@ void MineSweeper::Render() {
 	sf::Sprite num8(num8T);
 
 	std::vector<sf::Sprite> sprites{ boardDisp, num1, num2, num3, num4, num5, num6, num7, num8, bomb, flag, board };
-	std::vector<std::vector<sf::Sprite>> gameBoard;
-	std::vector<std::vector<sf::Sprite>> realGameBoard;
+	GameBoard gameBoard;
+	GameBoard realGameBoard;
 
 
 	realGameBoard.resize(width);
 	for (int i = 0; i < height; i++) {
 		realGameBoard[i].resize(height);
 	}
-
-
 
 	gameBoard.resize(width);
 	for (int i = 0; i < height; i++) {
@@ -260,52 +269,77 @@ void MineSweeper::Render() {
 	}
 
 
+
 	sf::Clock clock;
 	double t = 0.0;
 	double dt = 0.1;
-
-	while (gameWindow.isOpen()){
+	
+	while (gameWindow.isOpen()) {
 		double time = clock.getElapsedTime().asSeconds();
 		clock.restart();
 		t += time;
 
 		sf::Vector2i mousePos = sf::Mouse::getPosition(gameWindow);
-		int x = mousePos.x /picSize;
-		int y = mousePos.y /picSize;
+		int x = mousePos.x / picSize;
+		int y = mousePos.y / picSize;
 
 		std::cout << "X: " << x << ", Y: " << y << std::endl;
 
 		gameWindow.clear();
 
 		sf::Event event;
+
 		while (gameWindow.pollEvent(event)) {
 			if (event.type == sf::Event::Closed)
 				gameWindow.close();
-			if (event.type == sf::Event::MouseButtonPressed)
-				if (event.key.code == sf::Mouse::Left)
-					Calculate(mousePos, sprites, gameBoard, realGameBoard);
-				else if (event.key.code == sf::Mouse::Right)
-					CheckForFlag(mousePos, sprites, gameBoard, realGameBoard);
-		}
-
-		if (t > dt) {
-			t = 0;
-			//Calculate(gameWindow,mousePos);
-		}
-
-		for (int i = 0; i < width; i++) {
-			for (int j = 0; j < height; j++) {
-				realGameBoard[i][j].setPosition(i * picSize, j * picSize);
-				gameWindow.draw(realGameBoard[i][j]);
+			if (!gameOver) {
+				if (event.type == sf::Event::MouseButtonPressed)
+					if (event.key.code == sf::Mouse::Left)
+						Calculate(mousePos, sprites, gameBoard, realGameBoard);
+					else if (event.key.code == sf::Mouse::Right)
+						CheckForFlag(mousePos, sprites, gameBoard, realGameBoard);
 			}
+			else
+				if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::R) 
+					Restart();
+		}
+		if (t > dt) 
+			t = 0;
+
+		DrawBoard(gameWindow,realGameBoard);
+
+		if (gameOver) {
+			GameOver(gameWindow);
 		}
 
-		//RenderBoard(gameWindow, board);
-		//Fill(gameWindow, sprites);
 		gameWindow.display();
-				
 	}
 }
+
+void MineSweeper::Restart() {
+	gameOver = !gameOver;
+}
+
+void MineSweeper::GameOver(sf::RenderWindow& gameWindow) {
+
+	sf::RectangleShape shape(sf::Vector2f(width * picSize + 1, height * 2 + 1));
+	shape.setFillColor(sf::Color::White);
+
+	sf::Font Arial;
+	Arial.loadFromFile("Resources/Fonts/arial.ttf");
+
+	sf::Text scoreT;
+	scoreT.setFont(Arial);
+	scoreT.setString("GAME OVER! \nPRESS R TO RESTART.");
+	scoreT.setCharacterSize(18);
+	scoreT.setFillColor(sf::Color::Black);
+	scoreT.setPosition(width * picSize / 3, height * picSize / 2);
+	shape.setPosition(width - 2 * picSize, height / 2 * picSize);
+
+	gameWindow.draw(shape);
+	gameWindow.draw(scoreT);
+}
+
 
 void MineSweeper::Start() {
 	Render();

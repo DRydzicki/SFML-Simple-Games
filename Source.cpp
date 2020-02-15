@@ -6,8 +6,8 @@
 using namespace std;
 
 int main() {
-	//SnakeGame snake;
-	//snake.Start();
+	/*Snake snake;
+	snake.Start();*/
 	MineSweeper ms;
 	ms.Start();
 }
