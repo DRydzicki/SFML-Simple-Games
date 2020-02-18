@@ -1,6 +1,5 @@
 #include "Snake.h"
 
-
 Snake::Snake() : 
 	width(30), 
 	height(20), 
@@ -83,13 +82,13 @@ void Snake::Render() {
 
 void Snake::Move(bool gameOver) {
 	if (!gameOver) {
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && direction != DOWN) direction = UP;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && direction != RIGHT) direction = LEFT;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && direction != UP) direction = DOWN;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && direction != LEFT) direction = RIGHT;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && direction != Direction::DOWN) direction = Direction::UP;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && direction != Direction::RIGHT) direction = Direction::LEFT;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && direction != Direction::UP) direction = Direction::DOWN;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && direction != Direction::LEFT) direction = Direction::RIGHT;
 	}
 	else
-		direction = STOP;
+		direction = Direction::STOP;
 }
 
 void Snake::RenderFloor(sf::RenderWindow& gameWindow,sf::Sprite board) {
@@ -131,16 +130,16 @@ void Snake::Calculate() {
 		snakeY[i] = snakeY[i - 1];
 	}
 
-	if (direction == LEFT) {
+	if (direction == Direction::LEFT) {
 		snakeX[0]--;
 	}
-	if (direction == RIGHT) {
+	if (direction == Direction::RIGHT) {
 		snakeX[0]++;
 	}
-	if (direction == UP) {
+	if (direction == Direction::UP) {
 		snakeY[0]--;
 	}
-	if (direction == DOWN) {
+	if (direction == Direction::DOWN) {
 		snakeY[0]++;
 	}
 
@@ -230,7 +229,7 @@ void Snake::Restart() {
 	snakeX[0] = width / 2;
 	snakeY[0] = height / 2;
 	score = 0;
-	direction = STOP;
+	direction = Direction::STOP;
 	CreateFood();
 	music.play();
 }

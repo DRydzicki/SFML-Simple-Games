@@ -32,7 +32,7 @@ class Snake {
 	int snakeX[500], snakeY[500];
 	int snakeLength = 1;
 
-	enum Direction { STOP = 0, LEFT, RIGHT, UP, DOWN }direction;
+	enum class Direction { STOP = 0, LEFT, RIGHT, UP, DOWN}direction;
 	
 	sf::Sound music;
 
