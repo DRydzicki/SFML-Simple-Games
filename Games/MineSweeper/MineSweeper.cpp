@@ -207,35 +207,19 @@ void MineSweeper::Render() {
 	int realHeight = height * picSize;
 	
 	sf::RenderWindow gameWindow(sf::VideoMode(realWidth, realHeight), "SAPER", sf::Style::Close | sf::Style::Titlebar);
-	
-	sf::Texture boardDispT, boardT, bombT, flagT, num1T, num2T, num3T, num4T, num5T, num6T, num7T, num8T;
 
-	boardDispT.loadFromFile("Resources/Images/minesweeper/boardDisplay.png");
-	boardT.loadFromFile("Resources/Images/minesweeper/board.png");
-	bombT.loadFromFile("Resources/Images/minesweeper/bomb.png");
-	flagT.loadFromFile("Resources/Images/minesweeper/flag.png");
-	num1T.loadFromFile("Resources/Images/minesweeper/num1.png");
-	num2T.loadFromFile("Resources/Images/minesweeper/num2.png");
-	num3T.loadFromFile("Resources/Images/minesweeper/num3.png");
-	num4T.loadFromFile("Resources/Images/minesweeper/num4.png");
-	num5T.loadFromFile("Resources/Images/minesweeper/num5.png");
-	num6T.loadFromFile("Resources/Images/minesweeper/num6.png");
-	num7T.loadFromFile("Resources/Images/minesweeper/num7.png");
-	num8T.loadFromFile("Resources/Images/minesweeper/num8.png");
-
-
-	sf::Sprite boardDisp(boardDispT);
-	sf::Sprite board(boardT);
-	sf::Sprite bomb(bombT);
-	sf::Sprite flag(flagT);
-	sf::Sprite num1(num1T);
-	sf::Sprite num2(num2T);
-	sf::Sprite num3(num3T);
-	sf::Sprite num4(num4T);
-	sf::Sprite num5(num5T);
-	sf::Sprite num6(num6T);
-	sf::Sprite num7(num7T);
-	sf::Sprite num8(num8T);
+	sf::Sprite boardDisp(Resources::get().textureHolder.get("minesweeper/boardDisplay"));
+	sf::Sprite board(Resources::get().textureHolder.get("minesweeper/board"));
+	sf::Sprite bomb(Resources::get().textureHolder.get("minesweeper/bomb"));
+	sf::Sprite flag(Resources::get().textureHolder.get("minesweeper/flag"));
+	sf::Sprite num1(Resources::get().textureHolder.get("minesweeper/num1"));
+	sf::Sprite num2(Resources::get().textureHolder.get("minesweeper/num2"));
+	sf::Sprite num3(Resources::get().textureHolder.get("minesweeper/num3"));
+	sf::Sprite num4(Resources::get().textureHolder.get("minesweeper/num4"));
+	sf::Sprite num5(Resources::get().textureHolder.get("minesweeper/num5"));
+	sf::Sprite num6(Resources::get().textureHolder.get("minesweeper/num6"));
+	sf::Sprite num7(Resources::get().textureHolder.get("minesweeper/num7"));
+	sf::Sprite num8(Resources::get().textureHolder.get("minesweeper/num8"));
 
 	std::vector<sf::Sprite> sprites{ boardDisp, num1, num2, num3, num4, num5, num6, num7, num8, bomb, flag, board };
 	GameBoard gameBoard;

@@ -1,7 +1,8 @@
 #pragma once
 #include<SFML/Graphics.hpp>
 #include<vector>
-#include"../../Utilities/Random.h"
+#include"../../Engine/Utilities/Random.h"
+#include"../../Engine/ResourceManager/Resources.h"
 
 //debug
 #include<iostream>
@@ -37,8 +38,8 @@ private:
 	void DisplayEmpty(int x, int y, std::vector<sf::Sprite>, GameBoard&, GameBoard&);
 	void DisplayIfNotEmpty(int x, int y, std::vector<sf::Sprite>, GameBoard&, GameBoard&);
 	void GameOver(sf::RenderWindow&);
-	void Render();
-	void Restart();
+	void Render(); //MAIN GAME LOOP
+	void Restart(); //TODO
 	void DrawBoard(sf::RenderWindow& , GameBoard&);
 
 public:

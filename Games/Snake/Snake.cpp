@@ -1,17 +1,19 @@
 #include "Snake.h"
 
 
-Snake::Snake() {
-	width = 30;
-	height = 20;
-	wallCrossing = true;
-}
+Snake::Snake() : 
+	width(30), 
+	height(20), 
+	wallCrossing(true) 
+{}
 
-Snake::Snake(int width, int height, bool wallCrossing) {
-	this->width = width;
-	this->height = height;
-	this->wallCrossing = wallCrossing;
-}
+Snake::Snake(int width, int height, bool wallCrossing) :
+	width(width),
+	height(height),
+	wallCrossing(wallCrossing)
+{}
+	
+
 
 Snake::~Snake(){}
 
@@ -24,15 +26,10 @@ void Snake::Render() {
 
 	sf::RenderWindow gameWindow(sf::VideoMode(w, h + 4 * height), "Snake - The Game", sf::Style::Close | sf::Style::Titlebar);
 
-	sf::Texture snakeTex, foodTex, boardTex;
-
-	snakeTex.loadFromFile("Resources/Images/snake/snake.png");
-	boardTex.loadFromFile("Resources/Images/snake/floor.png");
-	foodTex.loadFromFile("Resources/Images/snake/apple.png");
-
-	sf::Sprite snake(snakeTex);
-	sf::Sprite board(boardTex);
-	sf::Sprite food(foodTex);
+	
+	sf::Sprite snake(Resources::get().textureHolder.get("snake/snake"));
+	sf::Sprite board(Resources::get().textureHolder.get("snake/floor"));
+	sf::Sprite food(Resources::get().textureHolder.get("snake/apple"));
 
 	sf::Clock clock;
 	double t = 0.0;
@@ -40,63 +37,59 @@ void Snake::Render() {
 
 	CreateFood();
 	
+
 	while (gameWindow.isOpen()) {
 		double time = clock.getElapsedTime().asSeconds();
 		clock.restart();
 		t += time;
 
 		sf::Event event;
+		gameWindow.clear();
+		while (gameWindow.pollEvent(event)) {
+			if (event.type == sf::Event::Closed)
+				gameWindow.close();
+			if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::P && gameOver == false) {
+				pause = !pause;
+				DisplayPause(gameWindow);
+			}
+			if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::R) {
+				gameOver = false;
+				Restart();
+			}
+		}
+
+		if (t > dt && !pause) {
+			t = 0;
+			Calculate();
+		}
+
+		RenderFloor(gameWindow, board);
+		PlaceFood(gameWindow, food);
+		PlaceSnake(gameWindow, snake);
+		Move(gameOver);
+		DisplayScore(gameWindow);
+
+
+		if (pause)
+			DisplayPause(gameWindow);
 		if (gameOver) {
 			GameOver(gameWindow);
-			music.stop();
-			while (gameWindow.pollEvent(event))
-				if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::R){
-					gameOver = !gameOver;
-					
-					Restart();
-				}
-		}
-		else {
-			while (gameWindow.pollEvent(event)) {
-				if (event.type == sf::Event::Closed)
-					gameWindow.close();
-				if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::P && gameOver == false) {
-					pause = !pause;
-					DisplayPause(gameWindow);
-				}
-				if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::R)
-					Restart();
-			}
-			if (!pause) {
-				if (t > dt) {
-					t = 0;
-					Calculate();
-				}
+		}			
 
-				RenderFloor(gameWindow, board);
-				PlaceFood(gameWindow, food);
-
-				for (int i = 0; i < snakeLength; i++) {
-					snake.setPosition(snakeX[i] * picSize, snakeY[i] * picSize);
-					gameWindow.draw(snake);
-				}
-
-				Move();
-				DisplayScore(gameWindow);
-
-				gameWindow.display();
-			}
-
-		}
+		gameWindow.display();
 	}
 }
 
 
-void Snake::Move() {
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && direction != DOWN) direction = UP;
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && direction != RIGHT) direction = LEFT;
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && direction != UP) direction = DOWN;
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && direction != LEFT) direction = RIGHT;
+void Snake::Move(bool gameOver) {
+	if (!gameOver) {
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && direction != DOWN) direction = UP;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && direction != RIGHT) direction = LEFT;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && direction != UP) direction = DOWN;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) && direction != LEFT) direction = RIGHT;
+	}
+	else
+		direction = STOP;
 }
 
 void Snake::RenderFloor(sf::RenderWindow& gameWindow,sf::Sprite board) {
@@ -111,6 +104,13 @@ void Snake::RenderFloor(sf::RenderWindow& gameWindow,sf::Sprite board) {
 void Snake::PlaceFood(sf::RenderWindow& gameWindow, sf::Sprite food) {
 	food.setPosition(foodX, foodY);
 	gameWindow.draw(food);
+}
+
+void Snake::PlaceSnake(sf::RenderWindow& gameWindow, sf::Sprite snake) {
+	for (int i = 0; i < snakeLength; i++) {
+		snake.setPosition(snakeX[i] * picSize, snakeY[i] * picSize);
+		gameWindow.draw(snake);
+	}
 }
 
 void Snake::CreateFood() {
@@ -179,8 +179,7 @@ void Snake::DisplayScore(sf::RenderWindow& gameWindow) {
 	sf::RectangleShape background(sf::Vector2f(width*picSize+1, height * 4+1));
 	background.setFillColor(sf::Color::White);
 
-	sf::Font Arial;
-	Arial.loadFromFile("Resources/Fonts/arial.ttf");
+	sf::Font Arial(Resources::get().fontHolder.get("arial"));
 
 	sf::Text scoreT;
 	scoreT.setFont(Arial);
@@ -194,40 +193,6 @@ void Snake::DisplayScore(sf::RenderWindow& gameWindow) {
 	gameWindow.draw(scoreT);
 }
 
-void Snake::GameOver(sf::RenderWindow& gameWindow) {
-	//std::cout << "xd";
-	//scoreString += std::to_string(score);
-	
-	
-
-	sf::RectangleShape shape(sf::Vector2f(width * picSize + 1, height * 2 + 1));
-	shape.setFillColor(sf::Color::White);
-
-	sf::Font Arial;
-	Arial.loadFromFile("Resources/Fonts/arial.ttf");
-
-	sf::Text scoreT;
-	scoreT.setFont(Arial);
-	scoreT.setString("GAME OVER! Score: " + std::to_string(score) + " \nPRESS R TO RESTART.");
-	scoreT.setCharacterSize(18);
-	scoreT.setFillColor(sf::Color::Black);
-	scoreT.setPosition(width*picSize/3, height * picSize/2);
-	shape.setPosition(width-2*picSize, height/2*picSize );
-
-	gameWindow.draw(shape);
-	gameWindow.draw(scoreT);
-	gameWindow.display();
-	
-}
-
-void Snake::Restart() {
-	snakeLength = 1;
-	snakeX[0] = width / 2;
-	snakeY[0] = height / 2;
-	score = 0;
-	music.play();
-}
-
 
 void Snake::DisplayPause(sf::RenderWindow& gameWindow) {
 	if (pause)
@@ -235,31 +200,38 @@ void Snake::DisplayPause(sf::RenderWindow& gameWindow) {
 	else
 		music.play();
 
-	sf::RectangleShape shape(sf::Vector2f(width * picSize + 1, height * 2 + 1));
-	shape.setFillColor(sf::Color::White);
+	sf::Vector2f pos(width * picSize/2, height * picSize/2);
+	sf::String str = "PAUSE";
+	TextField textField(str, pos, 32);
 
-	sf::Font Arial;
-	Arial.loadFromFile("Resources/Fonts/arial.ttf");
-
-	sf::Text pause;
-	pause.setFont(Arial);
-	pause.setString("PAUSE");
-	pause.setCharacterSize(28);
-	pause.setFillColor(sf::Color::Black);
-	pause.setPosition(width * picSize / 2, height * picSize / 2);
-	pause.setOrigin(pause.getLocalBounds().width / 2, pause.getLocalBounds().height / 2);
-	shape.setPosition(width -2* picSize , height * picSize);
-	shape.setPosition(shape.getLocalBounds().width / 2, shape.getLocalBounds().height / 2);
-
-	gameWindow.draw(shape);
-	gameWindow.draw(pause);
-	gameWindow.display();
-
+	textField.Draw(gameWindow);
 }
 
+void Snake::GameOver(sf::RenderWindow& gameWindow) {
+	music.stop();
+
+	sf::Vector2f pos(width * picSize /2, height * picSize / 2);
+	sf::String str = " GAME OVER! Score: " + std::to_string(score) + " \nPRESS R TO RESTART";
+
+	TextField textField(str, pos, 18);
+
+	textField.Draw(gameWindow);
+}
+
+
 void Snake::Music() {
-	music.openFromFile("Resources/Music/FaidherbeSquare.wav");
+	music.setBuffer(Resources::get().soundHolder.get("FaidherbeSquare"));
 	music.setLoop(true);
+	music.play();
+}
+
+void Snake::Restart() {
+	snakeLength = 1;
+	snakeX[0] = width / 2;
+	snakeY[0] = height / 2;
+	score = 0;
+	direction = STOP;
+	CreateFood();
 	music.play();
 }
 
