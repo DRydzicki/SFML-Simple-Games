@@ -1,5 +1,14 @@
 #include "TextField.h"
 
+TextField::TextField()
+{
+	text.setCharacterSize(16);
+	text.setString("Example");
+	text.setFont(Resources::get().fontHolder.get("arial"));
+	text.setFillColor(sf::Color::Black);
+	shape.setFillColor(sf::Color::White);
+}
+
 TextField::TextField(sf::String str, sf::Vector2f pos, int size)
 {
 	text.setCharacterSize(size);
@@ -9,6 +18,10 @@ TextField::TextField(sf::String str, sf::Vector2f pos, int size)
 	shape.setFillColor(sf::Color::White);
 	setBoxSize();
 	setPosition(pos);
+}
+
+TextField::~TextField()
+{
 }
 
 void TextField::setBoxSize() {
@@ -30,7 +43,7 @@ void TextField::setPosition(sf::Vector2f pos){
 	text.setPosition(shape.getPosition());
 }
 
-void TextField::SetSize(unsigned short size){
+void TextField::SetCharacterSize(unsigned short size){
 	text.setCharacterSize(size);
 }
 
@@ -52,3 +65,6 @@ void TextField::Draw(sf::RenderWindow& window) {
 	window.draw(text);
 }
 
+void TextField::setString(sf::String str) {
+	text.setString(str);
+}

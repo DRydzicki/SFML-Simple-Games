@@ -1,21 +1,9 @@
 #pragma once
-
-#include<SFML/Graphics.hpp>
-#include<SFML/Audio.hpp>
-#include<time.h>
-#include<string>
-#include"../../Engine/Utilities/Random.h"
-#include"../../Engine/GUI/TextField.h"
-#include"../../Engine/ResourceManager/Resources.h"
-
-
-//debug libraries
-#include<iostream>
-
+#include"../../Engine/EngineLoader.h"
 
 class Snake {
 
-	bool gameOver=false;
+	bool gameOver = false;
 	bool pause = false;
 
 	const bool wallCrossing;
@@ -23,35 +11,47 @@ class Snake {
 	unsigned int score = 0;
 	std::string scoreString = "Score: ";
 
-	const int picSize = 16;
+	static const int picSize = 16;
 	const int width;
 	const int height;
 
-	int foodX, foodY;
+	int foodX = 0, foodY = 0;
 
-	int snakeX[500], snakeY[500];
+	int snakeX[500]{ 0 }, snakeY[500]{0};
 	int snakeLength = 1;
 
 	enum class Direction { STOP = 0, LEFT, RIGHT, UP, DOWN}direction;
 	
 	sf::Sound music;
 
+	//Game GUI
+
 	void Music();
-
-	void Move(bool);
-	void RenderFloor(sf::RenderWindow&,sf::Sprite);
-	void CreateFood();
-	void PlaceFood(sf::RenderWindow&, sf::Sprite);
-	void PlaceSnake(sf::RenderWindow&, sf::Sprite);
-	void Calculate();
-	void WallCrossing();
-	void SelfEating();
-	void Render();
+	void RenderFloor(sf::RenderWindow&, sf::Sprite);
 	void DisplayScore(sf::RenderWindow&);
-	void GameOver(sf::RenderWindow&);
-	void Restart();
 	void DisplayPause(sf::RenderWindow&);
+	void DisplayEndGame(sf::RenderWindow&);
+	void PlaceSnake(sf::RenderWindow&, sf::Sprite);
+	void PlaceFood(sf::RenderWindow&, sf::Sprite);
 
+	//Game algorithms
+
+	void WallCrossing();
+	void Calculate();
+	void Render();
+	void Restart();
+
+	//Snake
+
+	bool Collision();
+	
+	void Move(bool);
+	void MoveSnakeHead();
+	
+	//Food
+	void CreateFood();
+	
+	
 public:
 	Snake();
 	Snake(int, int, bool);

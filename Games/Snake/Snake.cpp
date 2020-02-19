@@ -1,5 +1,6 @@
 #include "Snake.h"
 
+
 Snake::Snake() : 
 	width(30), 
 	height(20), 
@@ -11,11 +12,8 @@ Snake::Snake(int width, int height, bool wallCrossing) :
 	height(height),
 	wallCrossing(wallCrossing)
 {}
-	
-
 
 Snake::~Snake(){}
-
 
 void Snake::Render() {
 	int w = (width * picSize);
@@ -23,7 +21,7 @@ void Snake::Render() {
 	snakeX[0] = width / 2;
 	snakeY[0] = height / 2;
 
-	sf::RenderWindow gameWindow(sf::VideoMode(w, h + 4 * height), "Snake - The Game", sf::Style::Close | sf::Style::Titlebar);
+	sf::RenderWindow gameWindow(sf::VideoMode(w+200, h), "Snake - The Game", sf::Style::Close | sf::Style::Titlebar);
 
 	
 	sf::Sprite snake(Resources::get().textureHolder.get("snake/snake"));
@@ -35,7 +33,6 @@ void Snake::Render() {
 	double dt = 0.1;
 
 	CreateFood();
-	
 
 	while (gameWindow.isOpen()) {
 		double time = clock.getElapsedTime().asSeconds();
@@ -45,7 +42,7 @@ void Snake::Render() {
 		sf::Event event;
 		gameWindow.clear();
 		while (gameWindow.pollEvent(event)) {
-			if (event.type == sf::Event::Closed)
+			if (event.type == sf::Event::Closed || sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
 				gameWindow.close();
 			if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::P && gameOver == false) {
 				pause = !pause;
@@ -68,11 +65,10 @@ void Snake::Render() {
 		Move(gameOver);
 		DisplayScore(gameWindow);
 
-
 		if (pause)
 			DisplayPause(gameWindow);
 		if (gameOver) {
-			GameOver(gameWindow);
+			DisplayEndGame(gameWindow);
 		}			
 
 		gameWindow.display();
@@ -123,13 +119,26 @@ void Snake::CreateFood() {
 }
 
 
-
 void Snake::Calculate() {
 	for (int i = snakeLength; i > 0; i--) {
 		snakeX[i] = snakeX[i - 1];
 		snakeY[i] = snakeY[i - 1];
 	}
 
+	MoveSnakeHead();
+
+	if (foodX == snakeX[0] * picSize && foodY == snakeY[0] * picSize) {
+		CreateFood();
+		snakeLength++;
+		score++;
+	}
+
+	WallCrossing();
+	if (!Collision())
+		gameOver = true;
+}
+
+void Snake::MoveSnakeHead() {
 	if (direction == Direction::LEFT) {
 		snakeX[0]--;
 	}
@@ -142,17 +151,6 @@ void Snake::Calculate() {
 	if (direction == Direction::DOWN) {
 		snakeY[0]++;
 	}
-
-	if (foodX == snakeX[0]*picSize && foodY == snakeY[0]*picSize) {
-		CreateFood();
-		snakeLength++;
-		score++;
-	}
-	std::cout << "DEBUG SNAKE = (" << snakeX[0] << "," << snakeY[0] << ") LEN:" << snakeLength << std::endl;
-	std::cout << "DEBUG FOOD = (" << foodX/picSize << "," << foodY/picSize << ")\n";
-
-	WallCrossing();
-	SelfEating();
 }
 
 void Snake::WallCrossing() {
@@ -163,33 +161,25 @@ void Snake::WallCrossing() {
 		if (snakeY[0] >= height) snakeY[0] = 0;
 		else if (snakeY[0] < 0) snakeY[0] = height -1;
 	}
-	else if(snakeX[0] > width || snakeX[0] < 0 || snakeY[0] > height || snakeY[0] < 0)
+	else if(snakeX[0] >= width || snakeX[0] < 0 || snakeY[0] >= height || snakeY[0] < 0)
 		gameOver = true;
 }
 
-void Snake::SelfEating() {
+bool Snake::Collision() {
 	for (int i = 1; i < snakeLength; i++)
-		if (snakeX[0] == snakeX[i] && snakeY[0] == snakeY[i])  gameOver = true;
+		if (snakeX[0] == snakeX[i] && snakeY[0] == snakeY[i])  
+			return false;
+	return true;
 }
 
 void Snake::DisplayScore(sf::RenderWindow& gameWindow) {
 	scoreString += std::to_string(score);
 
-	sf::RectangleShape background(sf::Vector2f(width*picSize+1, height * 4+1));
-	background.setFillColor(sf::Color::White);
+	sf::Vector2f pos(width - 2 * picSize, height * picSize);
+	sf::String str = "Score: " + std::to_string(score) + "\nPress R to restart\nPress P to pause \nPress ESC to exit game";
+	StaticMenu staticMenu(StaticMenu::Location::RIGHT, 200, str, gameWindow);
 
-	sf::Font Arial(Resources::get().fontHolder.get("arial"));
-
-	sf::Text scoreT;
-	scoreT.setFont(Arial);
-	scoreT.setString("Score: "+std::to_string(score)+"\nPress R to restart\nPress P to pause game\nPress ESC to exit game");
-	scoreT.setCharacterSize(12);
-	scoreT.setFillColor(sf::Color::Black);
-	scoreT.setPosition(width-1.5*picSize, height*picSize);
-	background.setPosition(width-2*picSize, height*picSize);
-
-	gameWindow.draw(background);
-	gameWindow.draw(scoreT);
+	staticMenu.Draw(gameWindow);
 }
 
 
@@ -206,7 +196,7 @@ void Snake::DisplayPause(sf::RenderWindow& gameWindow) {
 	textField.Draw(gameWindow);
 }
 
-void Snake::GameOver(sf::RenderWindow& gameWindow) {
+void Snake::DisplayEndGame(sf::RenderWindow& gameWindow) {
 	music.stop();
 
 	sf::Vector2f pos(width * picSize /2, height * picSize / 2);

@@ -5,19 +5,25 @@
 
 class TextField
 {
+protected:
 	sf::RectangleShape shape;
 	sf::Text text;
 
 	void setPosition(sf::Vector2f);
-	void setBoxSize();
+	
 
 public:
+	TextField();
 	TextField(sf::String, sf::Vector2f, int = 16);
-	void SetSize(unsigned short);
+	~TextField();
+	void SetCharacterSize(unsigned short);
+	void setBoxSize();
 	void setFont(sf::Font);
 	void setColor(sf::Color);
 	void setFillColor(sf::Color);
+	void setString(sf::String);
 	void Draw(sf::RenderWindow&);
+	
 
 };
 
