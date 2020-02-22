@@ -5,7 +5,7 @@ class Snake {
 
 	bool gameOver = false;
 	bool pause = false;
-
+	bool focusPause = false;
 	const bool wallCrossing;
 
 	unsigned int score = 0;
@@ -31,7 +31,7 @@ class Snake {
 	void DisplayScore(sf::RenderWindow&);
 	void DisplayPause(sf::RenderWindow&);
 	void DisplayEndGame(sf::RenderWindow&);
-	void PlaceSnake(sf::RenderWindow&, sf::Sprite);
+	void PlaceSnake(sf::RenderWindow&, sf::Sprite, sf::Sprite);
 	void PlaceFood(sf::RenderWindow&, sf::Sprite);
 
 	//Game algorithms
@@ -47,6 +47,7 @@ class Snake {
 	
 	void Move(bool);
 	void MoveSnakeHead();
+	void RotateHead(sf::Sprite&, sf::Vector2f);
 	
 	//Food
 	void CreateFood();
