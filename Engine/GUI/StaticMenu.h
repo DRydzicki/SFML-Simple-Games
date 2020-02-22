@@ -8,10 +8,10 @@ class StaticMenu : public TextField
 {
 	static bool flag;
 public:
-	enum class Location { TOP, LEFT, RIGHT, BOTTOM };
+	enum class Location { TOP, LEFT, RIGHT, BOTTOM }loc;
 private:
-	void setPosition(sf::RenderWindow&, Location);
-	void setSize(sf::RenderWindow&, Location, unsigned int);
+	void setPosition(sf::RenderWindow&);
+	void setSize(sf::RenderWindow&, unsigned int);
 	void setTextPosition();
 
 public:

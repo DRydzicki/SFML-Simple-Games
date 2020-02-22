@@ -13,6 +13,8 @@
 //LOAD GUI
 #include"GUI/StaticMenu.h"
 #include"GUI/TextField.h"
+
+#include"GUI/WindowFunctions.h"
 //LOAD RESOURCES
 #include"ResourceManager/Resources.h"
 //LOAD UTILITIES

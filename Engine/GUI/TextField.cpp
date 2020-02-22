@@ -1,21 +1,17 @@
 #include "TextField.h"
 
-TextField::TextField()
-{
+TextField::TextField(){
 	text.setCharacterSize(16);
 	text.setString("Example");
 	text.setFont(Resources::get().fontHolder.get("arial"));
-	text.setFillColor(sf::Color::Black);
-	shape.setFillColor(sf::Color::White);
+	setColor(sf::Color::Black, sf::Color::White);
 }
 
-TextField::TextField(sf::String str, sf::Vector2f pos, int size)
-{
+TextField::TextField(sf::String str, sf::Vector2f pos, int size){
 	text.setCharacterSize(size);
 	text.setString(str);
 	text.setFont(Resources::get().fontHolder.get("arial"));
-	text.setFillColor(sf::Color::Black);
-	shape.setFillColor(sf::Color::White);
+	setColor(sf::Color::Black, sf::Color::White);
 	setBoxSize();
 	setPosition(pos);
 }
@@ -52,8 +48,9 @@ void TextField::setFont(sf::Font font)
 	text.setFont(font);
 }
 
-void TextField::setColor(sf::Color color){
-	text.setFillColor(color);
+void TextField::setColor(sf::Color textColor, sf::Color bgColor){
+	text.setFillColor(textColor);
+	shape.setFillColor(bgColor);
 }
 
 void TextField::setFillColor(sf::Color color){
@@ -63,6 +60,14 @@ void TextField::setFillColor(sf::Color color){
 void TextField::Draw(sf::RenderWindow& window) {
 	window.draw(shape);
 	window.draw(text);
+}
+
+void TextField::setOutline(sf::Color color, unsigned int thickness){
+	sf::FloatRect bounds(shape.getLocalBounds());
+	shape.setOutlineColor(color);
+	shape.setOutlineThickness(thickness);
+	shape.move(thickness, 0);
+	text.move(thickness, 0);
 }
 
 void TextField::setString(sf::String str) {

@@ -2,17 +2,18 @@
 #include "..\ResourceManager\Resources.h"
 
 
-StaticMenu::StaticMenu(Location loc,unsigned int size,sf::String str, sf::RenderWindow& window){
+StaticMenu::StaticMenu(Location loc,unsigned int size,sf::String str, sf::RenderWindow& window) : loc(loc){
 	setString(str);
-	setSize(window, loc, size);
-	setPosition(window, loc);
+	setSize(window, size);
+	setPosition(window);
 	setTextPosition();
+	setOutline(sf::Color::Black,2);
 }
 
 StaticMenu::~StaticMenu(){
 }
 
-void StaticMenu::setPosition(sf::RenderWindow& window, Location loc) {
+void StaticMenu::setPosition(sf::RenderWindow& window) {
 	const sf::Vector2u windowSize = window.getSize();
 	const sf::Vector2f box(shape.getSize());
 	if (loc == Location::TOP) {
@@ -29,7 +30,7 @@ void StaticMenu::setPosition(sf::RenderWindow& window, Location loc) {
 	}
 }
 
-void StaticMenu::setSize(sf::RenderWindow& window, Location loc, unsigned int size) {
+void StaticMenu::setSize(sf::RenderWindow& window, unsigned int size) {
 	const sf::Vector2u windowSize = window.getSize();
 	if (loc == Location::TOP || loc == Location::BOTTOM) 
 		shape.setSize(sf::Vector2f(windowSize.x, size));

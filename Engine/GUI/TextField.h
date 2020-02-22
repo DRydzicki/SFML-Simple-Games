@@ -11,19 +11,17 @@ protected:
 
 	void setPosition(sf::Vector2f);
 	
-
 public:
 	TextField();
-	TextField(sf::String, sf::Vector2f, int = 16);
+	TextField(sf::String text, sf::Vector2f pos, int size = 16);
 	~TextField();
 	void SetCharacterSize(unsigned short);
 	void setBoxSize();
-	void setFont(sf::Font);
-	void setColor(sf::Color);
-	void setFillColor(sf::Color);
-	void setString(sf::String);
-	void Draw(sf::RenderWindow&);
-	
-
+	void setFont(sf::Font font);
+	void setColor(sf::Color textColor, sf::Color bgColor);
+	void setFillColor(sf::Color bgColor);
+	void setString(sf::String text);
+	void setOutline(sf::Color color, unsigned int thickness);
+	void Draw(sf::RenderWindow& window);
 };
 

@@ -45,7 +45,7 @@ class Snake {
 
 	bool Collision();
 	
-	void Move(bool);
+	void Move();
 	void MoveSnakeHead();
 	void RotateHead(sf::Sprite&, sf::Vector2f);
 	

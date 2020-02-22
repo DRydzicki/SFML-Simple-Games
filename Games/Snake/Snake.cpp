@@ -1,11 +1,5 @@
 #include "Snake.h"
 
-//TODO
-//HEAD ROTATION
-//SCREEN GETS DARKER ON PAUSE AND ENDGAME (set shape with opacity)
-//DISABLE LOSTFOCUS ON PAUSE
-
-
 Snake::Snake() : 
 	width(30), 
 	height(20), 
@@ -70,10 +64,11 @@ void Snake::Render() {
 
 		RenderFloor(gameWindow, board);
 		PlaceFood(gameWindow, food);
+		Move();
 		PlaceSnake(gameWindow, snake, snakeHead);
-		Move(gameOver);
+		
 		DisplayScore(gameWindow);
-		if (pause)
+		if (pause || focusPause)
 			DisplayPause(gameWindow);
 		if (gameOver) {
 			DisplayEndGame(gameWindow);
@@ -84,7 +79,7 @@ void Snake::Render() {
 }
 
 
-void Snake::Move(bool gameOver) {
+void Snake::Move() {
 	if (!gameOver) {
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && direction != Direction::DOWN) direction = Direction::UP;
 		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) && direction != Direction::RIGHT) direction = Direction::LEFT;
@@ -126,21 +121,22 @@ void Snake::PlaceSnake(sf::RenderWindow& gameWindow, sf::Sprite snakeBody, sf::S
 void Snake::RotateHead(sf::Sprite& snakeHead, sf::Vector2f pos) {
 	const sf::Vector2f origin = snakeHead.getOrigin();
 	sf::Vector2f restorePos;
-	
-	if (direction == Direction::UP) {
-		snakeHead.setRotation(0.f);
-	}
-	else if (direction == Direction::DOWN) {
-		snakeHead.setRotation(180.f);
-		restorePos = { 16, 16 };
-	}
-	else if (direction == Direction::RIGHT) {
-		snakeHead.setRotation(90.f);
-		restorePos = { 16, 0 };
-	}
-	else if (direction == Direction::LEFT) {
-		snakeHead.setRotation(270.f);
-		restorePos = { 0, 16 };
+	if (!pause && !focusPause) {
+		if (direction == Direction::UP) {
+			snakeHead.setRotation(0.f);
+		}
+		else if (direction == Direction::DOWN) {
+			snakeHead.setRotation(180.f);
+			restorePos = { 16, 16 };
+		}
+		else if (direction == Direction::RIGHT) {
+			snakeHead.setRotation(90.f);
+			restorePos = { 16, 0 };
+		}
+		else if (direction == Direction::LEFT) {
+			snakeHead.setRotation(270.f);
+			restorePos = { 0, 16 };
+		}
 	}
 	
 	snakeHead.setPosition(pos.x-origin.x+restorePos.x, pos.y-origin.y+restorePos.y);
@@ -227,6 +223,8 @@ void Snake::DisplayPause(sf::RenderWindow& gameWindow) {
 	else
 		music.play();
 
+	WindowFunctions::Dim(gameWindow, 50);
+
 	sf::Vector2f pos(width * picSize/2, height * picSize/2);
 	sf::String str = "PAUSE";
 	TextField textField(str, pos, 48);
@@ -238,12 +236,14 @@ void Snake::DisplayPause(sf::RenderWindow& gameWindow) {
 void Snake::DisplayEndGame(sf::RenderWindow& gameWindow) {
 	music.stop();
 
+	WindowFunctions::Dim(gameWindow, 80);
+
 	sf::Vector2f pos(width * picSize /2, height * picSize / 2);
 	sf::String str = " GAME OVER! Score: " + std::to_string(score) + " \nPRESS R TO RESTART";
 
 	TextField textField(str, pos, 48);
 
-	textField.setOutline(sf::Color::Black, 30);
+	textField.setOutline(sf::Color::Black, 10);
 	textField.Draw(gameWindow);
 }
 
@@ -251,6 +251,7 @@ void Snake::Music() {
 	music.setBuffer(Resources::get().soundHolder.get("FaidherbeSquare"));
 	music.setLoop(true);
 	music.play();
+	music.setVolume(50);
 }
 
 void Snake::Restart() {
