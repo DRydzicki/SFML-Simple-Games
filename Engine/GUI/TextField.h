@@ -21,7 +21,12 @@ public:
 	void setColor(sf::Color textColor, sf::Color bgColor);
 	void setFillColor(sf::Color bgColor);
 	void setString(sf::String text);
-	void setOutline(sf::Color color, unsigned int thickness);
+	void setOutline(unsigned int thickness, sf::Color color = sf::Color::Black );
+	void Move(sf::Vector2f move);
+
+	sf::FloatRect getGlobalBounds();
+
+	void handleEvent(sf::Event event, sf::RenderWindow& window);
 	void Draw(sf::RenderWindow& window);
 };
 

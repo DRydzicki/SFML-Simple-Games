@@ -7,7 +7,7 @@ StaticMenu::StaticMenu(Location loc,unsigned int size,sf::String str, sf::Render
 	setSize(window, size);
 	setPosition(window);
 	setTextPosition();
-	setOutline(sf::Color::Black,2);
+	setOutline(4);
 }
 
 StaticMenu::~StaticMenu(){

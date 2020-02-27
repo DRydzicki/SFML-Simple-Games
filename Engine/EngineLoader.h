@@ -2,6 +2,9 @@
 //BASIC LIBRARIES
 #include<time.h>
 #include<string>
+#include<vector>
+#include<algorithm>
+#include<chrono>
 
 //DEBUG LIBRARIES
 #include<iostream>

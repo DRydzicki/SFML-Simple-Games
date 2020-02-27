@@ -48,7 +48,7 @@ void TextField::setFont(sf::Font font)
 	text.setFont(font);
 }
 
-void TextField::setColor(sf::Color textColor, sf::Color bgColor){
+void TextField::setColor(sf::Color textColor, sf::Color bgColor = sf::Color::White){
 	text.setFillColor(textColor);
 	shape.setFillColor(bgColor);
 }
@@ -62,12 +62,26 @@ void TextField::Draw(sf::RenderWindow& window) {
 	window.draw(text);
 }
 
-void TextField::setOutline(sf::Color color, unsigned int thickness){
+void TextField::setOutline(unsigned int thickness, sf::Color color){
 	sf::FloatRect bounds(shape.getLocalBounds());
 	shape.setOutlineColor(color);
 	shape.setOutlineThickness(thickness);
-	shape.move(thickness, 0);
-	text.move(thickness, 0);
+}
+
+void TextField::Move(sf::Vector2f move) {
+	shape.move(move);
+	text.move(move);
+}
+
+sf::FloatRect TextField::getGlobalBounds()
+{
+	return shape.getGlobalBounds();
+}
+
+void TextField::handleEvent(sf::Event event, sf::RenderWindow& window)
+{
+	//@TODO
+
 }
 
 void TextField::setString(sf::String str) {
