@@ -229,7 +229,7 @@ void Snake::DisplayPause(sf::RenderWindow& gameWindow) {
 	sf::String str = "PAUSE";
 	TextField textField(str, pos, 48);
 
-	textField.setOutline(sf::Color::Black, 10);
+	textField.setOutline(10);
 	textField.Draw(gameWindow);
 }
 
@@ -243,7 +243,7 @@ void Snake::DisplayEndGame(sf::RenderWindow& gameWindow) {
 
 	TextField textField(str, pos, 48);
 
-	textField.setOutline(sf::Color::Black, 10);
+	textField.setOutline(10);
 	textField.Draw(gameWindow);
 }
 
