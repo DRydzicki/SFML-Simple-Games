@@ -1,6 +1,6 @@
 #include "MineSweeper.h"
 
-MineSweeper::MineSweeper() : height(20), width(20), numberOfBombs(20){
+MineSweeper::MineSweeper() : height(16), width(16), numberOfBombs(40){
 	array.resize(width);
 	for (int i = 0; i < height; i++) {
 		array[i].resize(height);
@@ -308,8 +308,6 @@ void MineSweeper::Render() {
 	}
 }
 
-
-
 void MineSweeper::DisplayWin(sf::RenderWindow& gameWindow) {
 	WindowFunctions::Dim(gameWindow, 60);
 	sf::Vector2f pos(width * picSize / 2, height * picSize / 2);
@@ -330,10 +328,9 @@ void MineSweeper::DisplayEndGame(sf::RenderWindow& gameWindow) {
 }
 
 void MineSweeper::DisplayMenu(sf::RenderWindow& gamewindow, sf::Clock clock) {
-	int h = clock.getElapsedTime().asSeconds() / 3600;
-	int m = clock.getElapsedTime().asSeconds() / 60 - h * 60;
+	int m = clock.getElapsedTime().asSeconds() / 60;
 	int s = clock.getElapsedTime().asSeconds() - m * 60;
-	sf::String time = std::to_string(h) + ":" + std::to_string(m) + ":" + std::to_string(s);
+	sf::String time = std::to_string(m) + ":" + std::to_string(s);
 	sf::String str = "Mines: " + std::to_string(numOfFlags) + "/" + std::to_string(numberOfBombs) + "\t\tTime: " + time;
 	StaticMenu staticMenu(StaticMenu::Location::TOP, staticMenuHeight, str, gamewindow);
 	staticMenu.Move({ 0,-2 });

@@ -40,6 +40,7 @@ private:
 
 	//GAME CALCULATIONS
 	void LoadSprites();
+	void SetBoardSize();
 	void FillBoard();
 	void Calculate(sf::Vector2i, std::vector<sf::Sprite>, GameBoard&, GameBoard&);
 	void CheckForFlag(sf::Vector2i, std::vector<sf::Sprite>, GameBoard&, GameBoard&);
