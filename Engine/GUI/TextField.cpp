@@ -39,8 +39,13 @@ void TextField::setPosition(sf::Vector2f pos){
 	text.setPosition(shape.getPosition());
 }
 
-void TextField::SetCharacterSize(unsigned short size){
+void TextField::setCharacterSize(unsigned short size){
 	text.setCharacterSize(size);
+}
+
+void TextField::setSize(sf::Vector2f size)
+{
+	shape.setSize(size);
 }
 
 void TextField::setFont(sf::Font font)
@@ -63,7 +68,7 @@ void TextField::Draw(sf::RenderWindow& window) {
 }
 
 void TextField::setOutline(unsigned int thickness, sf::Color color){
-	sf::FloatRect bounds(shape.getLocalBounds());
+	//sf::FloatRect bounds(shape.getLocalBounds());
 	shape.setOutlineColor(color);
 	shape.setOutlineThickness(thickness);
 }

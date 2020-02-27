@@ -10,13 +10,14 @@ protected:
 	sf::Text text;
 
 	void setPosition(sf::Vector2f);
-	
+	void setBoxSize();
+
 public:
 	TextField();
 	TextField(sf::String text, sf::Vector2f pos, int size = 16);
 	~TextField();
-	void SetCharacterSize(unsigned short);
-	void setBoxSize();
+	void setCharacterSize(unsigned short);
+	void setSize(sf::Vector2f size);
 	void setFont(sf::Font font);
 	void setColor(sf::Color textColor, sf::Color bgColor);
 	void setFillColor(sf::Color bgColor);
