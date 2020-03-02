@@ -209,7 +209,7 @@ void Sudoku::resetRectGrid()
 			rectGrid[i][j] = false;
 }
 
-void Sudoku::CheckForRepetitiveInCol()
+void Sudoku::CheckForRepeatedInCol()
 {
 	for (int i = 0; i < 9; i++) {
 		for (int j = 0; j < 9; j++) {
@@ -227,7 +227,7 @@ void Sudoku::CheckForRepetitiveInCol()
 	}
 }
 
-void Sudoku::CheckForRepetitiveInRow()
+void Sudoku::CheckForRepeatedInRow()
 {
 	for (int i = 0; i < 9; i++) {
 		for (int j = 0; j < 9; j++) {
@@ -245,7 +245,7 @@ void Sudoku::CheckForRepetitiveInRow()
 	}
 }
 
-void Sudoku::CheckForRepetitiveInBlock()
+void Sudoku::CheckForRepeatedInBlock()
 {
 	for (int i = 0; i < 9; i++) {
 		int startRow = i - i % 3;
@@ -267,17 +267,17 @@ void Sudoku::CheckForRepetitiveInBlock()
 	}
 }
 
-void Sudoku::FindRepetitive(sf::RenderWindow& gameWindow)
+void Sudoku::FindRepeated(sf::RenderWindow& gameWindow)
 {
 	resetRectGrid();
-	CheckForRepetitiveInRow();
-	CheckForRepetitiveInCol();
-	CheckForRepetitiveInBlock();
+	CheckForRepeatedInRow();
+	CheckForRepeatedInCol();
+	CheckForRepeatedInBlock();
 
-	DrawRepetitive(gameWindow);
+	DrawRepeatedCells(gameWindow);
 }
 
-void Sudoku::DrawRepetitive(sf::RenderWindow& gameWindow)
+void Sudoku::DrawRepeatedCells(sf::RenderWindow& gameWindow)
 {
 	for (int i = 0; i < 9; i++) {
 		for (int j = 0; j < 9; j++) {
@@ -324,9 +324,7 @@ void Sudoku::Render()
 		gameWindow.clear();
 		DrawGrid(gameWindow);
 		DisplayMenu(gameWindow, timer);
-		
-		FindRepetitive(gameWindow);
-
+		FindRepeated(gameWindow);
 		sf::Event event;
 		while (gameWindow.pollEvent(event)) {
 			if (event.type == sf::Event::Closed)
@@ -383,16 +381,14 @@ void Sudoku::Render()
 						grid[x][y] = 9;
 						break;
 					}
-					if (event.type == sf::Event::MouseButtonPressed && event.key.code == sf::Mouse::Left) {
+					if (event.type == sf::Event::MouseButtonPressed && event.key.code == sf::Mouse::Left)
 						break;
-					}
 				}
 			}
 		}
 
 		if (t > dt)
 			t = 0;
-
 
 		if (checkCorrectness()) {
 			DisplayWin(gameWindow);
@@ -422,8 +418,6 @@ void Sudoku::DisplayMenu(sf::RenderWindow& gamewindow, sf::Clock clock) {
 		min = "0" + min;
 
 	sf::String time = min + ":" + sec;
-	
-	
 	sf::String str = "\tTime: " + time + "\t Press R to Restart.";
 	StaticMenu staticMenu(StaticMenu::Location::BOTTOM, 50, str, gamewindow);
 	staticMenu.Move({ 0,-2 });

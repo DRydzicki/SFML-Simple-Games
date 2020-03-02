@@ -39,12 +39,12 @@ class Sudoku
 
 	void resetRectGrid();
 
-	void CheckForRepetitiveInCol();
-	void CheckForRepetitiveInRow();
-	void CheckForRepetitiveInBlock();
+	void CheckForRepeatedInCol();
+	void CheckForRepeatedInRow();
+	void CheckForRepeatedInBlock();
 
-	void FindRepetitive(sf::RenderWindow& gameWindow);
-	void DrawRepetitive(sf::RenderWindow& gameWindow);
+	void FindRepeated(sf::RenderWindow& gameWindow);
+	void DrawRepeatedCells(sf::RenderWindow& gameWindow);
 
 	void Render();
 
