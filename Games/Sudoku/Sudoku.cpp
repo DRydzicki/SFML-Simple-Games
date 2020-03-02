@@ -1,7 +1,7 @@
 #include "Sudoku.h"
 
 //@TODO
-//timer is paused, when cell is selected
+//bug: timer is paused, when cell is selected
 
 Sudoku::Sudoku()
 {}
@@ -22,7 +22,7 @@ void Sudoku::DrawBlock(int x, int y, sf::RenderWindow& gameWindow)
 	block.setSize(sf::Vector2f(boxSize*3, boxSize*3));
 	block.setOutlineColor(sf::Color::Black);
 	block.setOutlineThickness(3);
-	block.setPosition(sf::Vector2f(boxSize * (x ), boxSize * (y )));
+	block.setPosition(sf::Vector2f(boxSize * (x), boxSize * (y)));
 	gameWindow.draw(block);
 
 	for (int i = x; i < x + 3; i++) {
@@ -42,7 +42,11 @@ void Sudoku::DrawBlock(int x, int y, sf::RenderWindow& gameWindow)
 			else
 				text.setString(std::to_string(grid[i][j]));
 			text.setFont(Resources::get().fontHolder.get("arial"));
-			text.setFillColor(sf::Color::Black);
+
+			if (blockedGrid[i][j] == true)
+				text.setFillColor(sf::Color::Blue);
+			else
+				text.setFillColor(sf::Color::Black);
 			
 			const sf::FloatRect bounds(text.getLocalBounds());
 			const sf::Vector2f box(cell.getSize());
@@ -160,7 +164,7 @@ bool Sudoku::Solve()
 
 void Sudoku::clearRandomCells() {
 	Random rnd;
-	int howmuch = 56;//25 left
+	int howmuch = 56;//25 left//56
 
 	for (int i = 0; i < 9; i++)
 		for (int j = 0; j < 9; j++)
@@ -198,6 +202,96 @@ bool Sudoku::checkCorrectness() {
 	return true;
 }
 
+void Sudoku::resetRectGrid()
+{
+	for (int i = 0; i < 9; i++)
+		for (int j = 0; j < 9; j++)
+			rectGrid[i][j] = false;
+}
+
+void Sudoku::CheckForRepetitiveInCol()
+{
+	for (int i = 0; i < 9; i++) {
+		for (int j = 0; j < 9; j++) {
+			int flag = 0;
+			for (int col = 0; col < 9; col++) {
+				if (grid[i][col] == grid[i][j] && j != col && grid[i][j] != 0) {
+					flag++;
+					rectGrid[i][col] = true;
+				}
+			}
+			if (flag != 0) {
+				rectGrid[i][j] = true;
+			}
+		}
+	}
+}
+
+void Sudoku::CheckForRepetitiveInRow()
+{
+	for (int i = 0; i < 9; i++) {
+		for (int j = 0; j < 9; j++) {
+			int flag = 0;
+			for (int row = 0; row < 9; row++) {
+				if (grid[row][j] == grid[i][j] && i != row && grid[i][j] != 0) {
+					flag++;
+					rectGrid[row][j] = true;
+				}
+			}
+			if (flag != 0) {
+				rectGrid[i][j] = true;
+			}
+		}
+	}
+}
+
+void Sudoku::CheckForRepetitiveInBlock()
+{
+	for (int i = 0; i < 9; i++) {
+		int startRow = i - i % 3;
+		for (int j = 0; j < 9; j++) {
+			int startCol = j - j % 3;
+			int flag = 0;
+			for (int row = 0; row < 3; row++) {
+				for (int col = 0; col < 3; col++) {
+					if (grid[row + startRow][col + startCol] == grid[i][j] && (i != row + startRow || j != col + startCol) && grid[i][j] != 0) {
+						rectGrid[row + startRow][col + startCol] = true;
+						flag++;
+					}
+				}
+			}
+			if (flag > 0) {
+				rectGrid[i][j] = true;
+			}
+		}
+	}
+}
+
+void Sudoku::FindRepetitive(sf::RenderWindow& gameWindow)
+{
+	resetRectGrid();
+	CheckForRepetitiveInRow();
+	CheckForRepetitiveInCol();
+	CheckForRepetitiveInBlock();
+
+	DrawRepetitive(gameWindow);
+}
+
+void Sudoku::DrawRepetitive(sf::RenderWindow& gameWindow)
+{
+	for (int i = 0; i < 9; i++) {
+		for (int j = 0; j < 9; j++) {
+			if (rectGrid[i][j] == true) {
+				sf::RectangleShape grid2;
+				grid2.setSize(sf::Vector2f(boxSize, boxSize));
+				grid2.setFillColor(sf::Color(255, 0, 0, 60));
+				grid2.setPosition(sf::Vector2f(boxSize * i, boxSize * j));
+				gameWindow.draw(grid2);
+			}
+		}
+	}
+}
+
 void Sudoku::Render()
 {
 	int realWidth = size * boxSize;
@@ -213,6 +307,7 @@ void Sudoku::Render()
 	Solve();
 	clearRandomCells();
 	blockMainCells();
+	
 	while (gameWindow.isOpen()) {
 
 		double time = clock.getElapsedTime().asSeconds();
@@ -229,6 +324,9 @@ void Sudoku::Render()
 		gameWindow.clear();
 		DrawGrid(gameWindow);
 		DisplayMenu(gameWindow, timer);
+		
+		FindRepetitive(gameWindow);
+
 		sf::Event event;
 		while (gameWindow.pollEvent(event)) {
 			if (event.type == sf::Event::Closed)
@@ -239,6 +337,7 @@ void Sudoku::Render()
 				Solve();
 				clearRandomCells();
 				blockMainCells();
+				timer.restart();
 			}
 			if (event.type == sf::Event::MouseButtonPressed && event.key.code == sf::Mouse::Left && blockedGrid[x][y] == true) {
 				sf::RectangleShape grid1;
@@ -247,7 +346,7 @@ void Sudoku::Render()
 				grid1.setPosition(sf::Vector2f(boxSize * x, boxSize * y));
 				gameWindow.draw(grid1);
 				gameWindow.display();
-				while (gameWindow.waitEvent(event)) {			
+				while (gameWindow.waitEvent(event)) {
 					if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Num1) {
 						grid[x][y] = 1;
 						break;
@@ -284,14 +383,16 @@ void Sudoku::Render()
 						grid[x][y] = 9;
 						break;
 					}
-					if (event.type == sf::Event::MouseButtonPressed && event.key.code == sf::Mouse::Left)
+					if (event.type == sf::Event::MouseButtonPressed && event.key.code == sf::Mouse::Left) {
 						break;
+					}
 				}
 			}
 		}
 
 		if (t > dt)
 			t = 0;
+
 
 		if (checkCorrectness()) {
 			DisplayWin(gameWindow);
@@ -313,7 +414,16 @@ void Sudoku::DisplayWin(sf::RenderWindow& gameWindow) {
 void Sudoku::DisplayMenu(sf::RenderWindow& gamewindow, sf::Clock clock) {
 	int m = clock.getElapsedTime().asSeconds() / 60;
 	int s = clock.getElapsedTime().asSeconds() - m * 60;
-	sf::String time = std::to_string(m) + ":" + std::to_string(s);
+	sf::String sec = std::to_string(s);
+	sf::String min = std::to_string(m);
+	if (s < 10)
+		sec = "0" + sec;
+	if (m < 10)
+		min = "0" + min;
+
+	sf::String time = min + ":" + sec;
+	
+	
 	sf::String str = "\tTime: " + time + "\t Press R to Restart.";
 	StaticMenu staticMenu(StaticMenu::Location::BOTTOM, 50, str, gamewindow);
 	staticMenu.Move({ 0,-2 });

@@ -8,12 +8,14 @@ class Sudoku
 	int grid[9][9];
 	int hiddenGrid[9][9];
 	bool blockedGrid[9][9];
+	bool rectGrid[9][9];
 
 	std::vector<int> line;
 
 	//GUI
 	void DrawGrid(sf::RenderWindow& gameWindow);
 	void DrawBlock(int x, int y, sf::RenderWindow& gameWindow);
+		
 
 	void DisplayWin(sf::RenderWindow& gameWindow);
 	void DisplayMenu(sf::RenderWindow& gamewindow, sf::Clock clock);
@@ -34,6 +36,15 @@ class Sudoku
 	void blockMainCells();
 
 	bool checkCorrectness();
+
+	void resetRectGrid();
+
+	void CheckForRepetitiveInCol();
+	void CheckForRepetitiveInRow();
+	void CheckForRepetitiveInBlock();
+
+	void FindRepetitive(sf::RenderWindow& gameWindow);
+	void DrawRepetitive(sf::RenderWindow& gameWindow);
 
 	void Render();
 
