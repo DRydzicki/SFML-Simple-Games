@@ -1,7 +1,8 @@
 #include "Sudoku.h"
 
-//@TODO
+///@TODO
 //bug: timer is paused, when cell is selected
+//encrypted highscore file
 
 Sudoku::Sudoku()
 {}
@@ -28,39 +29,41 @@ void Sudoku::DrawBlock(int x, int y, sf::RenderWindow& gameWindow)
 	for (int i = x; i < x + 3; i++) {
 		for (int j = y; j < y + 3; j++) {
 
-			sf::RectangleShape cell;
-			sf::Text text;
-			cell.setSize(sf::Vector2f(boxSize, boxSize));
-			cell.setFillColor(sf::Color::White);
-			cell.setOutlineThickness(1);
-			cell.setOutlineColor(sf::Color::Black);
-			cell.setPosition(sf::Vector2f(boxSize * i, boxSize * j));
-
-			text.setCharacterSize(20);
+			sf::Vector2f pos(boxSize * i, boxSize * j);
+			sf::String str = std::to_string(grid[i][j]);
 			if (grid[i][j] == 0)
-				text.setString(" ");
-			else
-				text.setString(std::to_string(grid[i][j]));
-			text.setFont(Resources::get().fontHolder.get("arial"));
+				str = " ";
 
-			if (blockedGrid[i][j] == true)
-				text.setFillColor(sf::Color::Blue);
-			else
-				text.setFillColor(sf::Color::Black);
-			
-			const sf::FloatRect bounds(text.getLocalBounds());
-			const sf::Vector2f box(cell.getSize());
+			TextField textField(str, pos, 20, sf::Vector2f(boxSize, boxSize));
+			textField.setFillColor(sf::Color::Transparent);
+			textField.setOutline(1);
+			textField.Move(sf::Vector2f(boxSize / 2, boxSize / 2));
 
-			text.setOrigin((bounds.width - box.x) / 2 + bounds.left, (bounds.height - box.y) / 2 + bounds.top);
-			text.setPosition(cell.getPosition());
-			
-			gameWindow.draw(cell);
-			gameWindow.draw(text);
-			
+			if(blockedGrid[i][j] == true)
+				textField.setTextColor(sf::Color::Blue);
+			else
+				textField.setTextColor(sf::Color::Black);
+
+			if (grid[i][j] == 0) {
+				for (int k = 0; k < 3; k++) {
+					for (int l = 0; l < 3; l++) {
+						sf::Vector2f pos(textField.getShapePosition().x + (k * boxSize/3), textField.getShapePosition().y + (l * boxSize/3));
+						sf::String str = std::to_string(smallGrid[l][k]);
+						if (smallHiddenGrid[i*3+k][j*3+l] == false)
+							str = " ";
+						TextField smallTextField(str, pos, 10);
+						smallTextField.setSize(sf::Vector2f(boxSize / 3, boxSize / 3));
+						smallTextField.setColor(sf::Color::Red,sf::Color::Transparent);
+						smallTextField.Move(sf::Vector2f(6, 6));
+						smallTextField.Draw(gameWindow);
+					}
+				}
+			}
+
+			textField.Draw(gameWindow);
 		}
 	}
 }
-
 
 void Sudoku::fillEmpty()
 {
@@ -325,11 +328,13 @@ void Sudoku::Render()
 		DrawGrid(gameWindow);
 		DisplayMenu(gameWindow, timer);
 		FindRepeated(gameWindow);
+
 		sf::Event event;
 		while (gameWindow.pollEvent(event)) {
 			if (event.type == sf::Event::Closed)
 				gameWindow.close();
 			if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::R) {
+				pencilMode = false;
 				fillEmpty();
 				fillDiagonals();
 				Solve();
@@ -337,7 +342,10 @@ void Sudoku::Render()
 				blockMainCells();
 				timer.restart();
 			}
-			if (event.type == sf::Event::MouseButtonPressed && event.key.code == sf::Mouse::Left && blockedGrid[x][y] == true) {
+			if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::P) {
+				pencilMode = !pencilMode;
+			}
+			if (event.type == sf::Event::MouseButtonPressed && event.key.code == sf::Mouse::Left && blockedGrid[x][y] == true ) {
 				sf::RectangleShape grid1;
 				grid1.setSize(sf::Vector2f(boxSize, boxSize));
 				grid1.setFillColor(sf::Color(0,0,255,60));
@@ -345,40 +353,71 @@ void Sudoku::Render()
 				gameWindow.draw(grid1);
 				gameWindow.display();
 				while (gameWindow.waitEvent(event)) {
-					if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Num1) {
-						grid[x][y] = 1;
+					if (event.type == sf::Event::KeyPressed && (event.key.code == sf::Keyboard::Num1 || event.key.code == sf::Keyboard::Numpad1)) {
+						if (pencilMode)
+							smallHiddenGrid[x * 3][y * 3] = !smallHiddenGrid[x * 3][y * 3];
+						else
+							grid[x][y] = 1;
 						break;
 					}
-					if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Num2) {
-						grid[x][y] = 2;
+					if (event.type == sf::Event::KeyPressed && (event.key.code == sf::Keyboard::Num2 || event.key.code == sf::Keyboard::Numpad2)) {
+						if (pencilMode)
+							smallHiddenGrid[x * 3 + 1][y * 3] = !smallHiddenGrid[x * 3 + 1][y * 3];
+						else
+							grid[x][y] = 2;
 						break;
 					}
-					if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Num3) {
-						grid[x][y] = 3;
+					if (event.type == sf::Event::KeyPressed && (event.key.code == sf::Keyboard::Num3 || event.key.code == sf::Keyboard::Numpad3)) {
+						if (pencilMode)
+							smallHiddenGrid[x * 3 + 2][y * 3] = !smallHiddenGrid[x * 3 + 2][y * 3];
+						else
+							grid[x][y] = 3;
 						break;
 					}
-					if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Num4) {
-						grid[x][y] = 4;
+					if (event.type == sf::Event::KeyPressed && (event.key.code == sf::Keyboard::Num4 || event.key.code == sf::Keyboard::Numpad4)) {
+						if (pencilMode)
+							smallHiddenGrid[x * 3][y * 3 + 1] = !smallHiddenGrid[x * 3][y * 3 + 1];
+						else
+							grid[x][y] = 4;
 						break;
 					}
-					if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Num5) {
-						grid[x][y] = 5;
+					if (event.type == sf::Event::KeyPressed && (event.key.code == sf::Keyboard::Num5 || event.key.code == sf::Keyboard::Numpad5)) {
+						if (pencilMode)
+							smallHiddenGrid[x * 3 + 1][y * 3 + 1] = !smallHiddenGrid[x * 3 + 1][y * 3 + 1];
+						else
+							grid[x][y] = 5;
 						break;
 					}
-					if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Num6) {
-						grid[x][y] = 6;
+					if (event.type == sf::Event::KeyPressed && (event.key.code == sf::Keyboard::Num6 || event.key.code == sf::Keyboard::Numpad6)) {
+						if (pencilMode)
+							smallHiddenGrid[x * 3+2][y * 3+1] = !smallHiddenGrid[x * 3 + 2][y * 3 + 1];
+						else
+							grid[x][y] = 6;
 						break;
 					}
-					if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Num7) {
-						grid[x][y] = 7;
+					if (event.type == sf::Event::KeyPressed && (event.key.code == sf::Keyboard::Num7 || event.key.code == sf::Keyboard::Numpad7)) {
+						if (pencilMode)
+							smallHiddenGrid[x * 3][y * 3 + 2] = !smallHiddenGrid[x * 3][y * 3 + 2];
+						else
+							grid[x][y] = 7;
 						break;
 					}
-					if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Num8) {
-						grid[x][y] = 8;
+					if (event.type == sf::Event::KeyPressed && (event.key.code == sf::Keyboard::Num8 || event.key.code == sf::Keyboard::Numpad8)) {
+						if (pencilMode)
+							smallHiddenGrid[x * 3 + 1][y * 3 + 2] = !smallHiddenGrid[x * 3 + 1][y * 3 + 2];
+						else
+							grid[x][y] = 8;
 						break;
 					}
-					if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Num9) {
-						grid[x][y] = 9;
+					if (event.type == sf::Event::KeyPressed && (event.key.code == sf::Keyboard::Num9 || event.key.code == sf::Keyboard::Numpad9)) {
+						if (pencilMode)
+							smallHiddenGrid[x * 3 + 2][y * 3 + 2] = !smallHiddenGrid[x * 3 + 2][y * 3 + 2];
+						else
+							grid[x][y] = 9;
+						break;
+					}
+					if (event.type == sf::Event::KeyPressed && (event.key.code == sf::Keyboard::Num0 || event.key.code == sf::Keyboard::Backspace || event.key.code == sf::Keyboard::Delete || event.key.code == sf::Keyboard::Numpad0)) {
+						grid[x][y] = 0;
 						break;
 					}
 					if (event.type == sf::Event::MouseButtonPressed && event.key.code == sf::Mouse::Left)
@@ -401,7 +440,7 @@ void Sudoku::Render()
 void Sudoku::DisplayWin(sf::RenderWindow& gameWindow) {
 	WindowFunctions::Dim(gameWindow, 60);
 	sf::Vector2f pos(size * boxSize / 2, size * boxSize / 2);
-	sf::String str = "\tYOU WIN! \nPRESS R TO RESTART.";
+	sf::String str = "\tYOU WIN! \nPRESS R TO RESTART. ";
 	TextField textField(str, pos);
 	textField.setOutline(2);
 	textField.Draw(gameWindow);
@@ -418,7 +457,7 @@ void Sudoku::DisplayMenu(sf::RenderWindow& gamewindow, sf::Clock clock) {
 		min = "0" + min;
 
 	sf::String time = min + ":" + sec;
-	sf::String str = "\tTime: " + time + "\t Press R to Restart.";
+	sf::String str = "Time: " + time + " Press R to Restart. PencilMode(P): " + std::to_string(pencilMode);
 	StaticMenu staticMenu(StaticMenu::Location::BOTTOM, 50, str, gamewindow);
 	staticMenu.Move({ 0,-2 });
 	staticMenu.Draw(gamewindow);
