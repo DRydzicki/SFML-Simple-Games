@@ -15,18 +15,20 @@ protected:
 public:
 	TextField();
 	TextField(sf::String text, sf::Vector2f pos, int size = 16);
+	TextField(sf::String text, sf::Vector2f pos, int size, sf::Vector2f Size);
 	~TextField();
 	void setCharacterSize(unsigned short);
 	void setSize(sf::Vector2f size);
 	void setFont(sf::Font font);
 	void setColor(sf::Color textColor, sf::Color bgColor);
 	void setFillColor(sf::Color bgColor);
+	void setTextColor(sf::Color textColor);
 	void setString(sf::String text);
 	void setOutline(unsigned int thickness, sf::Color color = sf::Color::Black );
 	void Move(sf::Vector2f move);
 
 	sf::FloatRect getGlobalBounds();
-
+	sf::Vector2f getShapePosition();
 	void handleEvent(sf::Event event, sf::RenderWindow& window);
 	void Draw(sf::RenderWindow& window);
 };

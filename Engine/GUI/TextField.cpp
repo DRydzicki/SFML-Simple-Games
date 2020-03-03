@@ -16,6 +16,16 @@ TextField::TextField(sf::String str, sf::Vector2f pos, int size){
 	setPosition(pos);
 }
 
+TextField::TextField(sf::String str, sf::Vector2f pos, int size, sf::Vector2f Size)
+{
+	text.setCharacterSize(size);
+	text.setString(str);
+	text.setFont(Resources::get().fontHolder.get("arial"));
+	setColor(sf::Color::Black, sf::Color::White);
+	setSize(Size);
+	setPosition(pos);
+}
+
 TextField::~TextField()
 {
 }
@@ -23,7 +33,7 @@ TextField::~TextField()
 void TextField::setBoxSize() {
 	shape.setSize(
 		sf::Vector2f(
-			text.getGlobalBounds().width + 32, 
+			text.getGlobalBounds().width+2, 
 			text.getGlobalBounds().height + text.getCharacterSize()
 		)
 	);
@@ -62,6 +72,11 @@ void TextField::setFillColor(sf::Color color){
 	shape.setFillColor(color);
 }
 
+void TextField::setTextColor(sf::Color textColor)
+{
+	text.setFillColor(textColor);
+}
+
 void TextField::Draw(sf::RenderWindow& window) {
 	window.draw(shape);
 	window.draw(text);
@@ -81,6 +96,11 @@ void TextField::Move(sf::Vector2f move) {
 sf::FloatRect TextField::getGlobalBounds()
 {
 	return shape.getGlobalBounds();
+}
+
+sf::Vector2f TextField::getShapePosition()
+{
+	return shape.getPosition();
 }
 
 void TextField::handleEvent(sf::Event event, sf::RenderWindow& window)
